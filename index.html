@@ -1,0 +1,818 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedMove | ICU On Wheels - Premium Ambulance Platform</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+:root{
+  --primary:#0D5EA6;
+  --primary-dark:#083F70;
+  --secondary:#38BDF8;
+  --emergency:#EF4444;
+  --neutral:#F3F4F6;
+  --text:#111827;
+  --text-muted:#6B7280;
+  --line-green:#06C755;
+  --white:#FFFFFF;
+  --radius:14px;
+  --shadow:0 10px 30px rgba(13,94,166,.12);
+  --maxw:1200px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Prompt','Inter',sans-serif;
+  color:var(--text);
+  background:var(--white);
+  line-height:1.6;
+  overflow-x:hidden;
+}
+img,svg{display:block;max-width:100%;}
+a{text-decoration:none;color:inherit;}
+ul{list-style:none;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;}
+.container{max-width:var(--maxw);margin:0 auto;padding:0 24px;}
+.section{padding:96px 0;}
+.section-tag{
+  display:inline-block;color:var(--primary);background:rgba(13,94,166,.08);
+  font-size:13px;font-weight:600;padding:6px 14px;border-radius:20px;margin-bottom:16px;
+}
+.section-title{font-size:36px;font-weight:700;margin-bottom:14px;letter-spacing:-.5px;}
+.section-subtitle{font-size:16px;color:var(--text-muted);max-width:600px;margin-bottom:48px;}
+.center{text-align:center;margin-left:auto;margin-right:auto;}
+
+/* Buttons */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:10px;font-weight:600;font-size:15px;transition:.2s;white-space:nowrap;}
+.btn-emergency{background:var(--emergency);color:#fff;}
+.btn-emergency:hover{background:#DC2626;transform:translateY(-2px);}
+.btn-line{background:var(--line-green);color:#fff;}
+.btn-line:hover{background:#05A648;transform:translateY(-2px);}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-dark);transform:translateY(-2px);}
+.btn-outline{background:#fff;color:var(--primary);border:1.5px solid var(--primary);}
+.btn-outline:hover{background:rgba(13,94,166,.06);}
+.btn-white{background:#fff;color:var(--primary);}
+
+/* Fade up */
+.fade-up{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease;}
+.fade-up.visible{opacity:1;transform:translateY(0);}
+
+/* ===== Loading Experience ===== */
+#loader{
+  position:fixed;inset:0;background:var(--primary);z-index:9999;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  transition:opacity .6s ease, visibility .6s ease;
+}
+#loader.hide{opacity:0;visibility:hidden;pointer-events:none;}
+.loader-logo{color:#fff;font-size:36px;font-weight:800;letter-spacing:4px;display:flex;align-items:center;gap:12px;opacity:0;animation:loaderFade .8s ease forwards;}
+.loader-tag{color:var(--secondary);font-size:14px;letter-spacing:6px;margin-top:10px;opacity:0;animation:loaderFade .8s ease .3s forwards;}
+.loader-bar{width:160px;height:3px;background:rgba(255,255,255,.2);border-radius:4px;margin-top:28px;overflow:hidden;}
+.loader-bar span{display:block;height:100%;width:0%;background:#fff;animation:loaderProgress 1.4s ease forwards;}
+@keyframes loaderFade{to{opacity:1;}}
+@keyframes loaderProgress{to{width:100%;}}
+
+/* ===== Header ===== */
+header{
+  position:sticky;top:0;z-index:500;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);
+  border-bottom:1px solid #EEF1F4;
+}
+.nav{display:flex;align-items:center;justify-content:space-between;height:76px;}
+.logo{font-weight:800;font-size:22px;color:var(--primary);display:flex;align-items:center;gap:8px;}
+.logo i{background:var(--primary);color:#fff;border-radius:8px;padding:6px;}
+.nav-links{display:flex;gap:32px;font-size:15px;font-weight:500;}
+.nav-links a:hover{color:var(--primary);}
+.nav-cta{display:flex;gap:10px;}
+.nav-cta .btn{padding:10px 18px;font-size:14px;}
+.burger{display:none;font-size:26px;}
+
+/* ===== Hero ===== */
+.hero{
+  position:relative;
+  background:linear-gradient(180deg,#F7FAFD 0%,#EAF3FB 100%);
+  padding:72px 0 40px;
+  overflow:hidden;
+}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center;}
+.hero-copy h1{font-size:44px;font-weight:700;line-height:1.28;letter-spacing:-1px;margin-bottom:20px;}
+.hero-copy h1 span{color:var(--primary);}
+.hero-copy p{font-size:17px;color:var(--text-muted);margin-bottom:32px;max-width:520px;}
+.hero-cta{display:flex;gap:14px;margin-bottom:36px;flex-wrap:wrap;}
+.hero-cta .btn{padding:16px 30px;font-size:16px;}
+.trust-bar{display:flex;flex-wrap:wrap;gap:10px;}
+.trust-chip{
+  display:flex;align-items:center;gap:6px;background:#fff;border:1px solid #E1E9F1;
+  padding:8px 14px;border-radius:30px;font-size:13px;font-weight:500;color:var(--primary-dark);
+  box-shadow:0 2px 8px rgba(13,94,166,.06);
+}
+.trust-chip i{width:15px;height:15px;color:var(--line-green);}
+
+/* Hero ICU illustration */
+.icu-scene{
+  position:relative;background:linear-gradient(160deg,var(--primary) 0%,var(--primary-dark) 100%);
+  border-radius:24px;padding:28px;color:#fff;box-shadow:var(--shadow);
+}
+.icu-scene .scene-label{font-size:12px;letter-spacing:2px;color:var(--secondary);font-weight:600;margin-bottom:6px;}
+.icu-scene .scene-title{font-size:20px;font-weight:700;margin-bottom:18px;}
+.icu-doors{position:relative;background:rgba(255,255,255,.06);border:1px dashed rgba(255,255,255,.25);border-radius:16px;height:340px;overflow:hidden;}
+.icu-bed{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);width:78%;height:70px;background:rgba(255,255,255,.14);border-radius:10px;}
+.hotspot{
+  position:absolute;width:34px;height:34px;border-radius:50%;background:#fff;color:var(--primary);
+  display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 6px rgba(255,255,255,.18);
+  animation:pulse 2.4s infinite;transition:.2s;
+}
+.hotspot:hover{transform:scale(1.15);}
+.hotspot i{width:16px;height:16px;}
+@keyframes pulse{0%,100%{box-shadow:0 0 0 6px rgba(255,255,255,.18);}50%{box-shadow:0 0 0 12px rgba(255,255,255,.05);}}
+.h1-vent{top:18%;left:22%;} .h2-monitor{top:14%;left:58%;} .h3-defib{top:44%;left:76%;}
+.h4-syringe{top:60%;left:30%;} .h5-oxygen{top:66%;left:64%;}
+.scene-note{font-size:12px;color:rgba(255,255,255,.6);margin-top:14px;}
+
+/* Popup modal */
+.overlay{position:fixed;inset:0;background:rgba(9,20,35,.55);display:none;align-items:center;justify-content:center;z-index:2000;padding:20px;}
+.overlay.open{display:flex;}
+.popup{background:#fff;border-radius:18px;max-width:380px;width:100%;padding:28px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.25);}
+.popup-close{position:absolute;top:14px;right:14px;color:var(--text-muted);}
+.popup-icon{width:52px;height:52px;border-radius:14px;background:rgba(13,94,166,.08);color:var(--primary);display:flex;align-items:center;justify-content:center;margin-bottom:16px;}
+.popup h3{font-size:19px;margin-bottom:8px;}
+.popup p{font-size:14px;color:var(--text-muted);}
+
+/* ===== Scroll storyboard ===== */
+.storyboard{background:var(--text);}
+.story-scene{
+  min-height:70vh;display:flex;align-items:center;justify-content:center;text-align:center;flex-direction:column;color:#fff;padding:60px 24px;
+}
+.story-scene .step{font-size:13px;letter-spacing:4px;color:var(--secondary);margin-bottom:16px;font-weight:600;}
+.story-scene h3{font-size:30px;font-weight:600;max-width:640px;margin-bottom:14px;}
+.story-scene p{color:rgba(255,255,255,.65);max-width:480px;font-size:15px;}
+.story-scene i{width:46px;height:46px;color:var(--secondary);margin-bottom:22px;}
+.story-scene.s1{background:linear-gradient(160deg,#111827,#0B1120);}
+.story-scene.s2{background:linear-gradient(160deg,#0B1120,#083F70);}
+.story-scene.s3{background:linear-gradient(160deg,#083F70,var(--primary));}
+.story-scene.s4{background:linear-gradient(160deg,var(--primary),#0369A1);}
+.scroll-cue{display:flex;flex-direction:column;align-items:center;gap:6px;color:rgba(255,255,255,.5);font-size:12px;margin-top:30px;animation:bounce 1.8s infinite;}
+@keyframes bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(8px);}}
+
+/* ===== Family trust panel ===== */
+.trust-panel{background:var(--white);margin-top:-64px;position:relative;z-index:5;}
+.trust-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.trust-card{
+  background:#fff;border-radius:18px;padding:28px;box-shadow:0 10px 34px rgba(17,24,39,.08);
+  display:flex;align-items:center;gap:16px;
+}
+.trust-card .ico{width:52px;height:52px;border-radius:14px;background:rgba(13,94,166,.08);color:var(--primary);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.trust-card .num{font-size:24px;font-weight:700;}
+.trust-card .label{font-size:13px;color:var(--text-muted);}
+
+/* ===== Hospital partner bar ===== */
+.partner-bar{background:var(--neutral);padding:36px 0;}
+.partner-row{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:22px;opacity:.85;}
+.partner-chip{font-weight:700;font-size:15px;color:#4B5563;display:flex;align-items:center;gap:8px;}
+.partner-chip i{width:18px;height:18px;color:var(--primary);}
+
+/* ===== Grids / cards ===== */
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:24px;}
+.card{background:#fff;border:1px solid #EEF1F4;border-radius:var(--radius);padding:28px;transition:.25s;}
+.card:hover{box-shadow:0 14px 34px rgba(17,24,39,.08);transform:translateY(-4px);border-color:transparent;}
+.card .ico{width:48px;height:48px;border-radius:12px;background:rgba(13,94,166,.08);color:var(--primary);display:flex;align-items:center;justify-content:center;margin-bottom:18px;}
+.card h4{font-size:17px;margin-bottom:8px;}
+.card p{font-size:14px;color:var(--text-muted);}
+
+/* Services card w/ link */
+.svc-card{position:relative;overflow:hidden;}
+.svc-card .tag{position:absolute;top:20px;right:20px;font-size:11px;font-weight:700;background:var(--emergency);color:#fff;padding:4px 10px;border-radius:20px;}
+.svc-card a.more{display:inline-flex;align-items:center;gap:6px;color:var(--primary);font-size:13px;font-weight:600;margin-top:12px;}
+
+/* Service mode comparison */
+.mode-tabs{display:flex;gap:10px;margin-bottom:32px;}
+.mode-tab{padding:12px 24px;border-radius:10px;font-weight:600;font-size:14px;background:var(--neutral);color:var(--text-muted);}
+.mode-tab.active{background:var(--primary);color:#fff;}
+.mode-panel{display:none;}
+.mode-panel.active{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;}
+.mode-panel .desc h3{font-size:22px;margin-bottom:10px;}
+.mode-panel .desc p{color:var(--text-muted);margin-bottom:18px;}
+.mode-list{display:flex;flex-direction:column;gap:12px;}
+.mode-list li{display:flex;align-items:center;gap:10px;font-size:14px;background:var(--neutral);padding:12px 16px;border-radius:10px;}
+.mode-list li i{width:18px;height:18px;color:var(--primary);flex-shrink:0;}
+.mode-visual{background:var(--neutral);border-radius:18px;height:220px;display:flex;align-items:center;justify-content:center;color:var(--primary);}
+.mode-visual i{width:64px;height:64px;opacity:.5;}
+
+/* Stats */
+.stats-band{background:var(--primary);color:#fff;}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;text-align:center;}
+.stat .num{font-size:38px;font-weight:800;}
+.stat .label{font-size:13px;color:rgba(255,255,255,.7);margin-top:4px;}
+
+/* Reviews */
+.review-wrap{max-width:680px;margin:0 auto;text-align:center;position:relative;}
+.review-slide{display:none;}
+.review-slide.active{display:block;animation:fadeIn .5s ease;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.stars{color:#F59E0B;display:flex;justify-content:center;gap:3px;margin-bottom:16px;}
+.stars i{width:18px;height:18px;}
+.review-slide p.quote{font-size:19px;font-weight:400;margin-bottom:18px;color:var(--text);}
+.review-slide .who{font-weight:600;}
+.review-slide .who span{color:var(--text-muted);font-weight:400;font-size:13px;display:block;}
+.review-dots{display:flex;justify-content:center;gap:8px;margin-top:26px;}
+.review-dots button{width:8px;height:8px;border-radius:50%;background:#D1D5DB;}
+.review-dots button.active{background:var(--primary);width:22px;border-radius:6px;}
+
+/* News / Media */
+.news-card img,.news-thumb{height:170px;background:linear-gradient(135deg,var(--secondary),var(--primary));border-radius:12px;margin-bottom:16px;display:flex;align-items:center;justify-content:center;color:#fff;}
+.news-date{font-size:12px;color:var(--text-muted);margin-bottom:6px;}
+
+/* FAQ */
+.faq-item{border-bottom:1px solid #EEF1F4;}
+.faq-q{display:flex;justify-content:space-between;align-items:center;padding:22px 4px;font-weight:600;font-size:15.5px;}
+.faq-q i{transition:.25s;color:var(--primary);}
+.faq-item.open .faq-q i{transform:rotate(180deg);}
+.faq-a{max-height:0;overflow:hidden;transition:.3s ease;font-size:14px;color:var(--text-muted);}
+.faq-item.open .faq-a{max-height:200px;padding-bottom:20px;}
+
+/* Contact */
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;}
+.contact-info-card{background:var(--neutral);border-radius:18px;padding:32px;}
+.contact-row{display:flex;gap:14px;margin-bottom:22px;}
+.contact-row i{width:20px;height:20px;color:var(--primary);flex-shrink:0;margin-top:2px;}
+.contact-row .l{font-size:13px;color:var(--text-muted);}
+.contact-row .v{font-weight:600;font-size:15px;}
+.social-row{display:flex;gap:10px;margin-top:20px;}
+.social-row a{width:40px;height:40px;border-radius:10px;background:#fff;display:flex;align-items:center;justify-content:center;color:var(--primary);border:1px solid #E5E7EB;}
+form.contact-form{display:flex;flex-direction:column;gap:14px;}
+form.contact-form input,form.contact-form textarea{
+  border:1px solid #E5E7EB;padding:14px 16px;border-radius:10px;font-family:inherit;font-size:14px;width:100%;
+}
+form.contact-form textarea{min-height:110px;resize:vertical;}
+
+/* Footer */
+footer{background:#0B1120;color:#fff;padding:64px 0 28px;}
+.footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:32px;margin-bottom:48px;}
+footer h5{font-size:14px;margin-bottom:16px;color:rgba(255,255,255,.55);letter-spacing:1px;}
+footer li{margin-bottom:10px;font-size:14px;color:rgba(255,255,255,.75);}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:24px;font-size:13px;color:rgba(255,255,255,.45);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+
+/* ===== Floating contact ===== */
+.fab-wrap{position:fixed;right:24px;bottom:24px;z-index:900;display:flex;flex-direction:column;align-items:flex-end;gap:12px;}
+.fab-menu{display:flex;flex-direction:column;gap:10px;margin-bottom:4px;opacity:0;transform:translateY(10px);pointer-events:none;transition:.25s;}
+.fab-menu.open{opacity:1;transform:translateY(0);pointer-events:auto;}
+.fab-item{display:flex;align-items:center;gap:10px;background:#fff;padding:10px 16px;border-radius:30px;box-shadow:0 8px 24px rgba(0,0,0,.15);font-size:13px;font-weight:600;}
+.fab-item i{width:18px;height:18px;}
+.fab-item.call i{color:var(--emergency);} .fab-item.line i{color:var(--line-green);}
+.fab-item.msg i{color:#0084FF;} .fab-item.tiktok i{color:#111827;}
+.fab-item.sos{background:var(--emergency);color:#fff;}
+.fab-item.sos i{color:#fff;}
+.fab-main{width:60px;height:60px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(13,94,166,.4);transition:.25s;}
+.fab-main.open{transform:rotate(135deg);}
+.fab-main i{width:26px;height:26px;}
+
+/* Mobile sticky bar */
+.mobile-bar{display:none;}
+
+@media(max-width:1024px){
+  .hero-grid{grid-template-columns:1fr;}
+  .grid-4{grid-template-columns:repeat(2,1fr);}
+  .grid-3{grid-template-columns:repeat(2,1fr);}
+  .trust-cards{grid-template-columns:1fr;}
+  .stats-grid{grid-template-columns:repeat(2,1fr);gap:32px;}
+  .footer-grid{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:720px){
+  .nav-links,.nav-cta{display:none;}
+  .burger{display:block;}
+  .hero-copy h1{font-size:32px;}
+  .section{padding:64px 0;}
+  .section-title{font-size:27px;}
+  .grid-4,.grid-3,.grid-2,.contact-grid,.mode-panel.active{grid-template-columns:1fr;}
+  .partner-row{justify-content:center;}
+  .fab-wrap{right:16px;bottom:82px;}
+  .mobile-bar{
+    display:flex;position:fixed;bottom:0;left:0;right:0;z-index:800;
+    background:#fff;border-top:1px solid #EEF1F4;padding:10px 14px;gap:10px;
+    box-shadow:0 -6px 20px rgba(0,0,0,.06);
+  }
+  .mobile-bar .btn{flex:1;justify-content:center;padding:14px 10px;font-size:14px;}
+  body{padding-bottom:70px;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOADING EXPERIENCE -->
+<div id="loader">
+  <div class="loader-logo"><i data-lucide="activity"></i>MEDMOVE</div>
+  <div class="loader-tag">I C U   O N   W H E E L S</div>
+  <div class="loader-bar"><span></span></div>
+</div>
+
+<!-- HEADER -->
+<header>
+  <div class="container nav">
+    <div class="logo"><i data-lucide="activity"></i>MedMove</div>
+    <nav class="nav-links">
+      <a href="#hero">หน้าแรก</a>
+      <a href="#about">เกี่ยวกับเรา</a>
+      <a href="#services">บริการ</a>
+      <a href="#equipment">อุปกรณ์</a>
+      <a href="#news">ข่าวสาร</a>
+      <a href="#contact">ติดต่อเรา</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-outline" href="tel:1669"><i data-lucide="phone" style="width:16px;height:16px"></i>โทรทันที</a>
+      <a class="btn btn-line" href="https://line.me" target="_blank" rel="noopener"><i data-lucide="message-circle" style="width:16px;height:16px"></i>LINE</a>
+    </div>
+    <button class="burger"><i data-lucide="menu"></i></button>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="container hero-grid">
+    <div class="hero-copy fade-up">
+      <div class="trust-chip" style="margin-bottom:20px;display:inline-flex;"><i data-lucide="shield-check"></i>ICU Ambulance มาตรฐานโรงพยาบาล</div>
+      <h1>ทุกวินาทีมีความหมาย<br>เราเคลื่อนย้ายผู้ป่วยวิกฤต<br>ด้วยมาตรฐาน <span>ICU ระดับโรงพยาบาล</span></h1>
+      <p>พร้อมทีมพยาบาลวิชาชีพและอุปกรณ์ช่วยชีวิตครบครัน ดูแลตั้งแต่หน้าบ้านจนถึงเตียงแพทย์</p>
+      <div class="hero-cta">
+        <a class="btn btn-emergency" href="tel:1669"><i data-lucide="phone-call"></i>โทรทันที</a>
+        <a class="btn btn-line" href="https://line.me" target="_blank" rel="noopener"><i data-lucide="message-circle"></i>เพิ่มเพื่อน LINE</a>
+      </div>
+      <div class="trust-bar">
+        <div class="trust-chip"><i data-lucide="check-circle-2"></i>ICU Ambulance</div>
+        <div class="trust-chip"><i data-lucide="check-circle-2"></i>Critical Care Team</div>
+        <div class="trust-chip"><i data-lucide="check-circle-2"></i>Ventilator Ready</div>
+        <div class="trust-chip"><i data-lucide="check-circle-2"></i>เปิดบริการ 24 ชั่วโมง</div>
+      </div>
+    </div>
+
+    <div class="icu-scene fade-up">
+      <div class="scene-label">ICU ON WHEELS</div>
+      <div class="scene-title">ภายในรถพยาบาล ICU — คลิกจุดสีขาวเพื่อดูอุปกรณ์</div>
+      <div class="icu-doors">
+        <button class="hotspot h1-vent" data-popup="ventilator"><i data-lucide="wind"></i></button>
+        <button class="hotspot h2-monitor" data-popup="monitor"><i data-lucide="activity"></i></button>
+        <button class="hotspot h3-defib" data-popup="defib"><i data-lucide="zap"></i></button>
+        <button class="hotspot h4-syringe" data-popup="syringe"><i data-lucide="syringe"></i></button>
+        <button class="hotspot h5-oxygen" data-popup="oxygen"><i data-lucide="wind"></i></button>
+        <div class="icu-bed"></div>
+      </div>
+      <div class="scene-note">* ภาพประกอบสำหรับ mockup — ภาพจริงถ่ายทำในรถพยาบาลและอุปกรณ์จริงของ MedMove</div>
+    </div>
+  </div>
+</section>
+
+<!-- SCROLL STORYBOARD -->
+<div class="storyboard">
+  <div class="story-scene s1 fade-up">
+    <div class="step">SCROLL ↓ 01</div>
+    <i data-lucide="door-open"></i>
+    <h3>เปิดประตูรถ</h3>
+    <p>ทุกครั้งที่ประตูเปิด คือจุดเริ่มต้นของการดูแลระดับโรงพยาบาล</p>
+  </div>
+  <div class="story-scene s2 fade-up">
+    <div class="step">SCROLL ↓ 02</div>
+    <i data-lucide="wind"></i>
+    <h3>เห็น Ventilator และอุปกรณ์ช่วยชีวิตครบครัน</h3>
+    <p>Ventilator · Cardiac Monitor · Defibrillator · Syringe Pump · Infusion Pump</p>
+  </div>
+  <div class="story-scene s3 fade-up">
+    <div class="step">SCROLL ↓ 03</div>
+    <i data-lucide="users"></i>
+    <h3>เห็นทีมพยาบาลและแพทย์ผู้เชี่ยวชาญ</h3>
+    <p>Critical Care Nurse · EMT · Paramedic พร้อมดูแลตลอดการเดินทาง</p>
+  </div>
+  <div class="story-scene s4 fade-up">
+    <div class="step">SCROLL ↓ 04</div>
+    <i data-lucide="heart-handshake"></i>
+    <h3>พร้อมดูแลคนที่คุณรัก ทุกวินาที ทุกเส้นทาง</h3>
+    <div class="hero-cta">
+      <a class="btn btn-white" href="tel:1669"><i data-lucide="phone-call"></i>โทรทันที</a>
+      <a class="btn btn-line" href="https://line.me" target="_blank" rel="noopener"><i data-lucide="message-circle"></i>เพิ่มเพื่อน LINE</a>
+    </div>
+  </div>
+</div>
+
+<!-- FAMILY TRUST PANEL -->
+<section class="trust-panel">
+  <div class="container">
+    <div class="trust-cards">
+      <div class="trust-card fade-up">
+        <div class="ico"><i data-lucide="heart"></i></div>
+        <div><div class="num">5,000+</div><div class="label">ครอบครัวไว้วางใจ</div></div>
+      </div>
+      <div class="trust-card fade-up">
+        <div class="ico"><i data-lucide="star"></i></div>
+        <div><div class="num">4.9 / 5</div><div class="label">คะแนนรีวิวจากผู้ใช้บริการ</div></div>
+      </div>
+      <div class="trust-card fade-up">
+        <div class="ico"><i data-lucide="building-2"></i></div>
+        <div><div class="num">20+</div><div class="label">โรงพยาบาลพันธมิตร</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOSPITAL PARTNER BAR -->
+<section class="partner-bar">
+  <div class="container partner-row">
+    <div class="partner-chip"><i data-lucide="plus-circle"></i>Bangkok Hospital</div>
+    <div class="partner-chip"><i data-lucide="plus-circle"></i>Samitivej</div>
+    <div class="partner-chip"><i data-lucide="plus-circle"></i>Siriraj</div>
+    <div class="partner-chip"><i data-lucide="plus-circle"></i>Chulalongkorn</div>
+    <div class="partner-chip"><i data-lucide="plus-circle"></i>Ramathibodi</div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section class="section" id="about">
+  <div class="container">
+    <div class="grid-2" style="align-items:center;gap:56px;">
+      <div class="fade-up">
+        <div class="section-tag">เกี่ยวกับเรา</div>
+        <div class="section-title">มากกว่ารถพยาบาล คือทีมแพทย์เคลื่อนที่</div>
+        <p style="color:var(--text-muted);margin-bottom:20px;">MedMove ก่อตั้งขึ้นเพื่อยกระดับมาตรฐานการเคลื่อนย้ายผู้ป่วยวิกฤตในประเทศไทย ด้วยทีมพยาบาลวิชาชีพ อุปกรณ์ช่วยชีวิตครบครัน และมาตรฐานการดูแลเทียบเท่าโรงพยาบาลชั้นนำ</p>
+        <p style="color:var(--text-muted);">เราเชื่อว่าทุกการเดินทางของผู้ป่วยวิกฤต ต้องปลอดภัย อบอุ่น และเชื่อถือได้ในทุกวินาที</p>
+      </div>
+      <div class="mode-visual fade-up" style="height:280px;background:linear-gradient(135deg,var(--secondary),var(--primary));color:#fff;">
+        <i data-lucide="ambulance" style="opacity:.9"></i>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY MEDMOVE -->
+<section class="section" style="background:var(--neutral);">
+  <div class="container">
+    <div class="section-tag">ทำไมต้อง MedMove</div>
+    <div class="section-title">มาตรฐานที่คุณวางใจได้</div>
+    <div class="grid-4">
+      <div class="card fade-up"><div class="ico"><i data-lucide="shield-check"></i></div><h4>เชื่อถือได้</h4><p>ทีมแพทย์และพยาบาลวิชาชีพผ่านการฝึกอบรม Critical Care โดยเฉพาะ</p></div>
+      <div class="card fade-up"><div class="ico"><i data-lucide="clock"></i></div><h4>ถึงตรงเวลา</h4><p>ระบบจัดสรรรถและทีมงานที่รวดเร็ว พร้อมออกเดินทางได้ทันที</p></div>
+      <div class="card fade-up"><div class="ico"><i data-lucide="cpu"></i></div><h4>เทคโนโลยีสูง</h4><p>อุปกรณ์การแพทย์มาตรฐานสากล พร้อมระบบติดตามตำแหน่งรถ</p></div>
+      <div class="card fade-up"><div class="ico"><i data-lucide="hand-heart"></i></div><h4>ดูแลด้วยหัวใจ</h4><p>ใส่ใจผู้ป่วยและครอบครัวดุจญาติของเราเอง ในทุกช่วงเวลา</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section class="section" id="services">
+  <div class="container">
+    <div class="section-tag">บริการของเรา</div>
+    <div class="section-title">เลือกบริการที่เหมาะกับผู้ป่วยของคุณ</div>
+    <div class="grid-3" style="margin-bottom:72px;">
+      <div class="card svc-card fade-up">
+        <span class="tag">Critical</span>
+        <div class="ico"><i data-lucide="heart-pulse"></i></div>
+        <h4>ICU Ambulance</h4>
+        <p>สำหรับผู้ป่วยวิกฤต Ventilator, Stroke, Cardiac พร้อมทีม Critical Care</p>
+        <a class="more" href="#">ดูรายละเอียด <i data-lucide="arrow-right" style="width:14px;height:14px"></i></a>
+      </div>
+      <div class="card svc-card fade-up">
+        <div class="ico"><i data-lucide="stethoscope"></i></div>
+        <h4>Critical Care Transfer</h4>
+        <p>ส่งต่อผู้ป่วยระหว่างโรงพยาบาล ด้วยทีมแพทย์และอุปกรณ์ครบครัน</p>
+        <a class="more" href="#">ดูรายละเอียด <i data-lucide="arrow-right" style="width:14px;height:14px"></i></a>
+      </div>
+      <div class="card svc-card fade-up">
+        <div class="ico"><i data-lucide="map"></i></div>
+        <h4>Long Distance Transport</h4>
+        <p>เคลื่อนย้ายผู้ป่วยระยะไกลข้ามจังหวัด ปลอดภัยตลอดเส้นทาง</p>
+        <a class="more" href="#">ดูรายละเอียด <i data-lucide="arrow-right" style="width:14px;height:14px"></i></a>
+      </div>
+    </div>
+
+    <!-- SERVICE MODE COMPARISON -->
+    <div class="fade-up">
+      <h3 style="font-size:22px;margin-bottom:24px;">เปรียบเทียบระดับการดูแล</h3>
+      <div class="mode-tabs">
+        <button class="mode-tab active" data-mode="basic">Basic</button>
+        <button class="mode-tab" data-mode="advanced">Advanced</button>
+        <button class="mode-tab" data-mode="icu">ICU</button>
+      </div>
+      <div class="mode-panel active" id="mode-basic">
+        <div class="desc"><h3>Basic</h3><p>เหมาะสำหรับผู้ป่วยที่เคลื่อนไหวลำบาก ไม่มีภาวะวิกฤต</p>
+          <ul class="mode-list">
+            <li><i data-lucide="check"></i>รถเข็นวีลแชร์</li>
+            <li><i data-lucide="check"></i>ถังออกซิเจนพกพา</li>
+          </ul>
+        </div>
+        <div class="mode-visual"><i data-lucide="wheelchair"></i></div>
+      </div>
+      <div class="mode-panel" id="mode-advanced">
+        <div class="desc"><h3>Advanced</h3><p>สำหรับผู้ป่วยที่ต้องเฝ้าระวังอาการระหว่างเดินทาง</p>
+          <ul class="mode-list">
+            <li><i data-lucide="check"></i>Cardiac Monitor</li>
+            <li><i data-lucide="check"></i>Infusion Pump</li>
+          </ul>
+        </div>
+        <div class="mode-visual"><i data-lucide="activity"></i></div>
+      </div>
+      <div class="mode-panel" id="mode-icu">
+        <div class="desc"><h3>ICU</h3><p>ระดับสูงสุดสำหรับผู้ป่วยวิกฤต เทียบเท่าห้อง ICU โรงพยาบาล</p>
+          <ul class="mode-list">
+            <li><i data-lucide="check"></i>Ventilator</li>
+            <li><i data-lucide="check"></i>Defibrillator</li>
+            <li><i data-lucide="check"></i>Syringe Pump</li>
+            <li><i data-lucide="check"></i>Critical Care Team</li>
+          </ul>
+        </div>
+        <div class="mode-visual"><i data-lucide="wind"></i></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EQUIPMENT / ICU AMBULANCE -->
+<section class="section" style="background:var(--neutral);" id="equipment">
+  <div class="container">
+    <div class="section-tag">อุปกรณ์การแพทย์</div>
+    <div class="section-title">พร้อมอุปกรณ์ช่วยชีวิตครบครัน</div>
+    <div class="grid-4">
+      <div class="card fade-up"><div class="ico"><i data-lucide="wind"></i></div><h4>Ventilator</h4><p>เครื่องช่วยหายใจมาตรฐานโรงพยาบาล</p></div>
+      <div class="card fade-up"><div class="ico"><i data-lucide="activity"></i></div><h4>Cardiac Monitor</h4><p>ติดตามสัญญาณชีพตลอดการเดินทาง</p></div>
+      <div class="card fade-up"><div class="ico"><i data-lucide="zap"></i></div><h4>Defibrillator</h4><p>เครื่องกระตุกหัวใจไฟฟ้าพร้อมใช้งาน</p></div>
+      <div class="card fade-up"><div class="ico"><i data-lucide="syringe"></i></div><h4>Syringe Pump</h4><p>ควบคุมการให้ยาอย่างแม่นยำ</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- STATISTICS -->
+<section class="section stats-band">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat fade-up"><div class="num" data-count="10">0</div><div class="label">ปีประสบการณ์</div></div>
+      <div class="stat fade-up"><div class="num" data-count="8500">0</div><div class="label">ผู้ป่วยที่เคลื่อนย้าย</div></div>
+      <div class="stat fade-up"><div class="num" data-count="20">0</div><div class="label">โรงพยาบาลพันธมิตร</div></div>
+      <div class="stat fade-up"><div class="num" data-count="9">0</div><div class="label">นาทีเฉลี่ยออกรถ</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section class="section">
+  <div class="container">
+    <div class="section-tag center">รีวิวจากผู้ใช้บริการ</div>
+    <div class="section-title center">ครอบครัวไว้วางใจเรา</div>
+    <div class="review-wrap fade-up">
+      <div class="review-slide active">
+        <div class="stars"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></div>
+        <p class="quote">"ทีมงานมืออาชีพมาก ดูแลคุณแม่ตั้งแต่หน้าบ้านจนถึงโรงพยาบาลอย่างอบอุ่นและปลอดภัย"</p>
+        <div class="who">คุณสมศรี<span>ญาติผู้ป่วย</span></div>
+      </div>
+      <div class="review-slide">
+        <div class="stars"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></div>
+        <p class="quote">"อุปกรณ์ครบครันเหมือนอยู่ใน ICU จริง ๆ มั่นใจมากตอนย้ายผู้ป่วยข้ามจังหวัด"</p>
+        <div class="who">คุณอนุชา<span>ญาติผู้ป่วย</span></div>
+      </div>
+      <div class="review-slide">
+        <div class="stars"><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i><i data-lucide="star"></i></div>
+        <p class="quote">"โทรปุ๊บ รถมาถึงเร็วมาก ทีมพยาบาลดูแลดีจนคุณพ่อรู้สึกอุ่นใจตลอดทาง"</p>
+        <div class="who">คุณวราภรณ์<span>ญาติผู้ป่วย</span></div>
+      </div>
+      <div class="review-dots">
+        <button class="active" data-i="0"></button><button data-i="1"></button><button data-i="2"></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NEWS -->
+<section class="section" style="background:var(--neutral);" id="news">
+  <div class="container">
+    <div class="section-tag">ข่าวสาร</div>
+    <div class="section-title">ข่าวและกิจกรรมล่าสุด</div>
+    <div class="grid-3">
+      <div class="card fade-up"><div class="news-thumb"><i data-lucide="newspaper"></i></div><div class="news-date">1 ก.ค. 2569</div><h4>MedMove ขยายบริการครอบคลุม 5 จังหวัด</h4></div>
+      <div class="card fade-up"><div class="news-thumb"><i data-lucide="newspaper"></i></div><div class="news-date">20 มิ.ย. 2569</div><h4>ร่วมมือโรงพยาบาลพันธมิตรใหม่ 3 แห่ง</h4></div>
+      <div class="card fade-up"><div class="news-thumb"><i data-lucide="newspaper"></i></div><div class="news-date">10 มิ.ย. 2569</div><h4>กิจกรรม CSR อบรมปฐมพยาบาลชุมชน</h4></div>
+    </div>
+  </div>
+</section>
+
+<!-- MEDIA CENTER -->
+<section class="section">
+  <div class="container">
+    <div class="section-tag">Media Center</div>
+    <div class="section-title">สื่อประชาสัมพันธ์</div>
+    <div class="grid-4">
+      <div class="card fade-up"><div class="ico"><i data-lucide="file-text"></i></div><h4>Press Release</h4><p>ข่าวประชาสัมพันธ์อย่างเป็นทางการ</p></div>
+      <div class="card fade-up"><div class="ico"><i data-lucide="calendar-heart"></i></div><h4>CSR Activities</h4><p>กิจกรรมเพื่อสังคมของ MedMove</p></div>
+      <div class="card fade-up"><div class="ico"><i data-lucide="video"></i></div><h4>Videos</h4><p>วิดีโอแนะนำบริการและความรู้สุขภาพ</p></div>
+      <div class="card fade-up"><div class="ico"><i data-lucide="download"></i></div><h4>Downloads</h4><p>Company Profile และ Press Kit</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PARTNERS -->
+<section class="section" style="background:var(--neutral);">
+  <div class="container">
+    <div class="section-tag">พันธมิตรของเรา</div>
+    <div class="section-title">องค์กรที่ไว้วางใจ MedMove</div>
+    <div class="partner-row" style="justify-content:flex-start;gap:32px;">
+      <div class="partner-chip"><i data-lucide="shield"></i>ประกันสุขภาพ A</div>
+      <div class="partner-chip"><i data-lucide="shield"></i>ประกันสุขภาพ B</div>
+      <div class="partner-chip"><i data-lucide="building"></i>องค์กร C</div>
+      <div class="partner-chip"><i data-lucide="building"></i>องค์กร D</div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="section">
+  <div class="container" style="max-width:800px;">
+    <div class="section-tag">คำถามที่พบบ่อย</div>
+    <div class="section-title">FAQ</div>
+    <div class="faq-item open">
+      <div class="faq-q">MedMove ให้บริการตลอด 24 ชั่วโมงหรือไม่ <i data-lucide="chevron-down"></i></div>
+      <div class="faq-a">ให้บริการตลอด 24 ชั่วโมงทุกวัน รวมวันหยุดนักขัตฤกษ์</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">รถพยาบาล ICU มีอุปกรณ์อะไรบ้าง <i data-lucide="chevron-down"></i></div>
+      <div class="faq-a">Ventilator, Cardiac Monitor, Defibrillator, Syringe Pump, Infusion Pump, Oxygen System และ Portable Suction</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">สามารถเรียกใช้บริการข้ามจังหวัดได้หรือไม่ <i data-lucide="chevron-down"></i></div>
+      <div class="faq-a">ได้ MedMove ให้บริการเคลื่อนย้ายผู้ป่วยระยะไกลทั่วประเทศ</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">จองบริการล่วงหน้าได้หรือไม่ <i data-lucide="chevron-down"></i></div>
+      <div class="faq-a">ได้ สามารถจองผ่านหน้า Booking หรือโทรติดต่อทีมงานได้โดยตรง</div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section class="section" style="background:var(--neutral);" id="contact">
+  <div class="container">
+    <div class="section-tag">ติดต่อเรา</div>
+    <div class="section-title">พร้อมช่วยเหลือคุณทุกวินาที</div>
+    <div class="contact-grid">
+      <div class="contact-info-card fade-up">
+        <div class="contact-row"><i data-lucide="phone"></i><div><div class="l">โทรศัพท์ฉุกเฉิน</div><div class="v">1669 / 02-XXX-XXXX</div></div></div>
+        <div class="contact-row"><i data-lucide="mail"></i><div><div class="l">อีเมล</div><div class="v">contact@medmove.co.th</div></div></div>
+        <div class="contact-row"><i data-lucide="map-pin"></i><div><div class="l">ที่อยู่</div><div class="v">กรุงเทพมหานคร ประเทศไทย</div></div></div>
+        <div class="social-row">
+          <a href="#" aria-label="LINE"><i data-lucide="message-circle"></i></a>
+          <a href="#" aria-label="Facebook"><i data-lucide="facebook"></i></a>
+          <a href="#" aria-label="Instagram"><i data-lucide="instagram"></i></a>
+          <a href="#" aria-label="TikTok"><i data-lucide="music-2"></i></a>
+          <a href="#" aria-label="YouTube"><i data-lucide="youtube"></i></a>
+        </div>
+      </div>
+      <form class="contact-form fade-up" onsubmit="return false;">
+        <input type="text" placeholder="ชื่อ-นามสกุล">
+        <input type="tel" placeholder="เบอร์โทรศัพท์">
+        <textarea placeholder="รายละเอียดที่ต้องการแจ้ง"></textarea>
+        <button class="btn btn-primary" type="submit">ส่งข้อความ <i data-lucide="send" style="width:16px;height:16px"></i></button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="logo" style="color:#fff;"><i data-lucide="activity"></i>MedMove</div>
+        <p style="color:rgba(255,255,255,.6);font-size:14px;margin-top:14px;max-width:280px;">Premium Medical Transport — ICU On Wheels ดูแลผู้ป่วยวิกฤตด้วยมาตรฐานโรงพยาบาล</p>
+      </div>
+      <div><h5>บริการ</h5><ul><li>ICU Ambulance</li><li>Critical Care Transfer</li><li>Long Distance</li><li>Event Standby</li></ul></div>
+      <div><h5>บริษัท</h5><ul><li>เกี่ยวกับเรา</li><li>ข่าวสาร</li><li>Media Center</li><li>ร่วมงานกับเรา</li></ul></div>
+      <div><h5>ติดต่อ</h5><ul><li>1669</li><li>contact@medmove.co.th</li><li>LINE: @medmove</li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2569 MedMove. สงวนลิขสิทธิ์ทุกประการ</span>
+      <span>Premium Ambulance Platform — Mockup v1.0</span>
+    </div>
+  </div>
+</footer>
+
+<!-- FLOATING CONTACT -->
+<div class="fab-wrap">
+  <div class="fab-menu" id="fabMenu">
+    <a class="fab-item sos" href="tel:1669"><i data-lucide="siren"></i>ฉุกเฉิน SOS</a>
+    <a class="fab-item call" href="tel:1669"><i data-lucide="phone"></i>โทรทันที</a>
+    <a class="fab-item line" href="https://line.me" target="_blank" rel="noopener"><i data-lucide="message-circle"></i>LINE</a>
+    <a class="fab-item msg" href="#"><i data-lucide="send"></i>Messenger</a>
+    <a class="fab-item tiktok" href="#"><i data-lucide="music-2"></i>TikTok</a>
+  </div>
+  <button class="fab-main" id="fabMain"><i data-lucide="plus"></i></button>
+</div>
+
+<!-- MOBILE STICKY BAR -->
+<div class="mobile-bar">
+  <a class="btn btn-emergency" href="tel:1669"><i data-lucide="phone-call" style="width:16px;height:16px"></i>โทรทันที</a>
+  <a class="btn btn-line" href="https://line.me" target="_blank" rel="noopener"><i data-lucide="message-circle" style="width:16px;height:16px"></i>LINE</a>
+</div>
+
+<!-- HOTSPOT POPUP -->
+<div class="overlay" id="overlay">
+  <div class="popup">
+    <button class="popup-close" id="popupClose"><i data-lucide="x"></i></button>
+    <div class="popup-icon"><i data-lucide="wind" id="popupIcon"></i></div>
+    <h3 id="popupTitle">Ventilator</h3>
+    <p id="popupDesc">เครื่องช่วยหายใจมาตรฐานโรงพยาบาล ควบคุมออกซิเจนและอัตราการหายใจอย่างแม่นยำสำหรับผู้ป่วยวิกฤต</p>
+  </div>
+</div>
+
+<script>
+lucide.createIcons();
+
+// Loader
+window.addEventListener('load',()=>{
+  setTimeout(()=>document.getElementById('loader').classList.add('hide'),1300);
+});
+
+// Fade-up on scroll
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+},{threshold:.15});
+document.querySelectorAll('.fade-up').forEach(el=>io.observe(el));
+
+// Hotspot popups
+const popupData = {
+  ventilator:{icon:'wind',title:'Ventilator',desc:'เครื่องช่วยหายใจมาตรฐานโรงพยาบาล ควบคุมออกซิเจนและอัตราการหายใจอย่างแม่นยำสำหรับผู้ป่วยวิกฤต'},
+  monitor:{icon:'activity',title:'Cardiac Monitor',desc:'ติดตามสัญญาณชีพ คลื่นหัวใจ ความดัน และออกซิเจนในเลือดตลอดการเดินทาง'},
+  defib:{icon:'zap',title:'Defibrillator',desc:'เครื่องกระตุกหัวใจไฟฟ้าพร้อมใช้งานทันทีในกรณีหัวใจหยุดเต้นเฉียบพลัน'},
+  syringe:{icon:'syringe',title:'Syringe Pump',desc:'ควบคุมการให้ยาต่อเนื่องอย่างแม่นยำในระดับไมโครลิตรสำหรับผู้ป่วยวิกฤต'},
+  oxygen:{icon:'wind',title:'Oxygen System',desc:'ระบบออกซิเจนแรงดันสูงสำรองเพียงพอตลอดการเดินทางไกล'}
+};
+const overlay=document.getElementById('overlay');
+document.querySelectorAll('[data-popup]').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const d=popupData[btn.dataset.popup];
+    document.getElementById('popupTitle').textContent=d.title;
+    document.getElementById('popupDesc').textContent=d.desc;
+    document.getElementById('popupIcon').setAttribute('data-lucide',d.icon);
+    overlay.classList.add('open');
+    lucide.createIcons();
+  });
+});
+document.getElementById('popupClose').addEventListener('click',()=>overlay.classList.remove('open'));
+overlay.addEventListener('click',(e)=>{ if(e.target===overlay) overlay.classList.remove('open'); });
+
+// Service mode tabs
+document.querySelectorAll('.mode-tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.mode-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.mode-panel').forEach(p=>p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('mode-'+tab.dataset.mode).classList.add('active');
+  });
+});
+
+// Stat counters
+const statEls = document.querySelectorAll('.stat .num');
+const statIO = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const el=e.target, target=+el.dataset.count, dur=1200, start=performance.now();
+      function tick(now){
+        const p=Math.min((now-start)/dur,1);
+        el.textContent = Math.round(target*p).toLocaleString();
+        if(p<1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+      statIO.unobserve(el);
+    }
+  });
+},{threshold:.4});
+statEls.forEach(el=>statIO.observe(el));
+
+// Reviews slider
+const slides=document.querySelectorAll('.review-slide');
+const dots=document.querySelectorAll('.review-dots button');
+let cur=0;
+function showSlide(i){
+  slides.forEach(s=>s.classList.remove('active'));
+  dots.forEach(d=>d.classList.remove('active'));
+  slides[i].classList.add('active');
+  dots[i].classList.add('active');
+  cur=i;
+}
+dots.forEach(d=>d.addEventListener('click',()=>showSlide(+d.dataset.i)));
+setInterval(()=>showSlide((cur+1)%slides.length),5000);
+
+// FAQ accordion
+document.querySelectorAll('.faq-q').forEach(q=>{
+  q.addEventListener('click',()=>{
+    const item=q.parentElement;
+    const wasOpen=item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i=>i.classList.remove('open'));
+    if(!wasOpen) item.classList.add('open');
+  });
+});
+
+// Floating contact FAB
+const fabMain=document.getElementById('fabMain'), fabMenu=document.getElementById('fabMenu');
+fabMain.addEventListener('click',()=>{
+  fabMain.classList.toggle('open');
+  fabMenu.classList.toggle('open');
+});
+</script>
+</body>
+</html>
