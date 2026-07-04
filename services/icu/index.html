@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICU Ambulance | MedMove</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Prompt:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+:root{
+  --primary:#0D5EA6;
+  --primary-dark:#083F70;
+  --secondary:#38BDF8;
+  --emergency:#EF4444;
+  --neutral:#F3F4F6;
+  --text:#111827;
+  --text-muted:#6B7280;
+  --line-green:#06C755;
+  --white:#FFFFFF;
+  --radius:14px;
+  --shadow:0 10px 30px rgba(13,94,166,.12);
+  --maxw:1200px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'Prompt','Inter',sans-serif;color:var(--text);background:#fff;line-height:1.6;overflow-x:hidden;}
+img,svg{display:block;max-width:100%;}
+a{text-decoration:none;color:inherit;}
+ul{list-style:none;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;}
+.container{max-width:var(--maxw);margin:0 auto;padding:0 24px;}
+.section{padding:96px 0;}
+.section-tag{display:inline-block;color:var(--primary);background:rgba(13,94,166,.08);font-size:13px;font-weight:600;padding:6px 14px;border-radius:20px;margin-bottom:16px;}
+.section-title{font-size:36px;font-weight:700;margin-bottom:14px;letter-spacing:-.5px;}
+.section-subtitle{font-size:16px;color:var(--text-muted);max-width:600px;margin-bottom:48px;}
+.center{text-align:center;margin-left:auto;margin-right:auto;}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;border-radius:10px;font-weight:600;font-size:15px;transition:.2s;white-space:nowrap;}
+.btn-emergency{background:var(--emergency);color:#fff;}
+.btn-emergency:hover{background:#DC2626;transform:translateY(-2px);}
+.btn-line{background:var(--line-green);color:#fff;}
+.btn-line:hover{background:#05A648;transform:translateY(-2px);}
+.btn-outline{background:#fff;color:var(--primary);border:1.5px solid var(--primary);}
+.btn-outline:hover{background:rgba(13,94,166,.06);}
+.btn-white{background:#fff;color:var(--primary);}
+
+.fade-up{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease;}
+.fade-up.visible{opacity:1;transform:translateY(0);}
+
+/* Header (shared) */
+header{position:sticky;top:0;z-index:500;background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-bottom:1px solid #EEF1F4;}
+.nav{display:flex;align-items:center;justify-content:space-between;height:76px;}
+.logo{font-weight:800;font-size:22px;color:var(--primary);display:flex;align-items:center;gap:8px;}
+.logo i{background:var(--primary);color:#fff;border-radius:8px;padding:6px;}
+.nav-links{display:flex;gap:32px;font-size:15px;font-weight:500;}
+.nav-links a:hover{color:var(--primary);}
+.nav-cta{display:flex;gap:10px;}
+.nav-cta .btn{padding:10px 18px;font-size:14px;}
+.burger{display:none;font-size:26px;}
+
+/* Breadcrumb + page hero */
+.breadcrumb{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--text-muted);margin-bottom:18px;}
+.breadcrumb i{width:13px;height:13px;}
+.breadcrumb a:hover{color:var(--primary);}
+.page-hero{background:linear-gradient(180deg,#F7FAFD 0%,#EAF3FB 100%);padding:56px 0 64px;}
+.page-hero h1{font-size:40px;font-weight:700;letter-spacing:-1px;margin-bottom:16px;}
+.page-hero h1 span{color:var(--primary);}
+.page-hero p{font-size:16px;color:var(--text-muted);max-width:600px;margin-bottom:28px;}
+.page-hero .hero-cta{display:flex;gap:14px;flex-wrap:wrap;}
+
+/* ===== Camera Focus Viewer ===== */
+.viewer-wrap{position:relative;background:linear-gradient(160deg,var(--primary) 0%,var(--primary-dark) 100%);border-radius:24px;padding:0;box-shadow:var(--shadow);overflow:hidden;}
+.viewer-topbar{display:flex;align-items:center;justify-content:space-between;padding:22px 28px;color:#fff;}
+.viewer-topbar .scene-label{font-size:12px;letter-spacing:2px;color:var(--secondary);font-weight:600;margin-bottom:6px;}
+.viewer-topbar .scene-title{font-size:18px;font-weight:700;}
+.viewer-reset{display:none;align-items:center;gap:6px;background:rgba(255,255,255,.12);color:#fff;padding:9px 16px;border-radius:10px;font-size:13px;font-weight:600;}
+.viewer-reset.show{display:inline-flex;}
+.viewer-reset i{width:15px;height:15px;}
+.viewer-stage{position:relative;height:460px;overflow:hidden;}
+.icu-scene-lg{position:absolute;inset:0;transform-origin:center center;will-change:transform;}
+.icu-doors-lg{position:absolute;inset:24px;background:rgba(255,255,255,.06);border:1px dashed rgba(255,255,255,.25);border-radius:16px;}
+.icu-bed-lg{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);width:64%;height:90px;background:rgba(255,255,255,.14);border-radius:10px;}
+.hotspot-lg{position:absolute;width:38px;height:38px;border-radius:50%;background:#fff;color:var(--primary);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 7px rgba(255,255,255,.18);animation:pulseLg 2.4s infinite;transition:.2s;z-index:5;}
+.hotspot-lg:hover{transform:scale(1.15);}
+.hotspot-lg i{width:18px;height:18px;}
+.hotspot-lg .hs-label{position:absolute;top:44px;left:50%;transform:translateX(-50%);font-size:11px;color:#fff;background:rgba(0,0,0,.35);padding:3px 9px;border-radius:20px;white-space:nowrap;opacity:0;transition:.2s;}
+.hotspot-lg:hover .hs-label{opacity:1;}
+@keyframes pulseLg{0%,100%{box-shadow:0 0 0 7px rgba(255,255,255,.18);}50%{box-shadow:0 0 0 14px rgba(255,255,255,.05);}}
+.p-vent{top:20%;left:22%;} .p-monitor{top:16%;left:58%;} .p-defib{top:46%;left:76%;}
+.p-syringe{top:62%;left:30%;} .p-oxygen{top:68%;left:64%;}
+
+.viewer-overlay{position:absolute;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);opacity:0;pointer-events:none;transition:opacity .5s ease;z-index:6;}
+.viewer-overlay.show{opacity:1;pointer-events:auto;}
+
+.equipment-panel{position:absolute;top:0;right:0;height:100%;width:340px;background:#fff;box-shadow:-14px 0 40px rgba(0,0,0,.25);transform:translateX(100%);transition:transform .5s cubic-bezier(.22,1,.36,1);z-index:8;padding:28px;overflow-y:auto;}
+.equipment-panel.open{transform:translateX(0);}
+.equipment-panel .ep-icon{width:52px;height:52px;border-radius:14px;background:rgba(13,94,166,.08);color:var(--primary);display:flex;align-items:center;justify-content:center;margin-bottom:18px;}
+.equipment-panel h3{font-size:21px;margin-bottom:6px;}
+.equipment-panel .ep-standard{font-size:12px;font-weight:600;color:var(--primary);background:rgba(13,94,166,.08);display:inline-block;padding:4px 12px;border-radius:20px;margin-bottom:16px;}
+.equipment-panel p.ep-desc{font-size:13.5px;color:var(--text-muted);margin-bottom:18px;}
+.ep-list{display:flex;flex-direction:column;gap:10px;margin-bottom:22px;}
+.ep-list li{display:flex;align-items:center;gap:9px;font-size:13.5px;background:var(--neutral);padding:10px 14px;border-radius:10px;}
+.ep-list li i{width:16px;height:16px;color:var(--primary);flex-shrink:0;}
+.ep-actions{display:flex;flex-direction:column;gap:10px;}
+.ep-actions .btn{width:100%;justify-content:center;font-size:13.5px;padding:12px;}
+.viewer-note{padding:16px 28px 22px;font-size:12px;color:rgba(255,255,255,.55);}
+
+/* Service mode comparison (shared pattern) */
+.mode-tabs{display:flex;gap:10px;margin-bottom:32px;}
+.mode-tab{padding:12px 24px;border-radius:10px;font-weight:600;font-size:14px;background:var(--neutral);color:var(--text-muted);}
+.mode-tab.active{background:var(--primary);color:#fff;}
+.mode-panel{display:none;}
+.mode-panel.active{display:grid;grid-template-columns:1fr 1fr;gap:32px;align-items:center;}
+.mode-panel .desc h3{font-size:22px;margin-bottom:10px;}
+.mode-panel .desc p{color:var(--text-muted);margin-bottom:18px;}
+.mode-list{display:flex;flex-direction:column;gap:12px;}
+.mode-list li{display:flex;align-items:center;gap:10px;font-size:14px;background:var(--neutral);padding:12px 16px;border-radius:10px;}
+.mode-list li i{width:18px;height:18px;color:var(--primary);flex-shrink:0;}
+.mode-visual{background:var(--neutral);border-radius:18px;height:220px;display:flex;align-items:center;justify-content:center;color:var(--primary);}
+.mode-visual i{width:64px;height:64px;opacity:.5;}
+
+/* ===== Timeline ===== */
+.timeline{display:grid;grid-template-columns:repeat(3,1fr);gap:0;position:relative;}
+.timeline::before{content:"";position:absolute;top:34px;left:16%;right:16%;height:2px;background:repeating-linear-gradient(90deg,var(--primary) 0 10px,transparent 10px 18px);}
+.tl-step{position:relative;text-align:center;padding:0 16px;}
+.tl-icon{width:68px;height:68px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;position:relative;z-index:2;box-shadow:0 8px 20px rgba(13,94,166,.25);}
+.tl-icon i{width:28px;height:28px;}
+.tl-step h4{font-size:17px;margin-bottom:8px;}
+.tl-step p{font-size:13.5px;color:var(--text-muted);}
+
+/* CTA band */
+.cta-band{background:linear-gradient(160deg,var(--primary),var(--primary-dark));color:#fff;text-align:center;}
+.cta-band h2{font-size:30px;font-weight:700;margin-bottom:14px;}
+.cta-band p{color:rgba(255,255,255,.75);margin-bottom:30px;}
+.cta-band .hero-cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+
+/* Footer + FAB (shared) */
+footer{background:#0B1120;color:#fff;padding:64px 0 28px;}
+.footer-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:32px;margin-bottom:48px;}
+footer h5{font-size:14px;margin-bottom:16px;color:rgba(255,255,255,.55);letter-spacing:1px;}
+footer li{margin-bottom:10px;font-size:14px;color:rgba(255,255,255,.75);}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.1);padding-top:24px;font-size:13px;color:rgba(255,255,255,.45);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+
+.fab-wrap{position:fixed;right:24px;bottom:24px;z-index:900;display:flex;flex-direction:column;align-items:flex-end;gap:12px;}
+.fab-menu{display:flex;flex-direction:column;gap:10px;margin-bottom:4px;opacity:0;transform:translateY(10px);pointer-events:none;transition:.25s;}
+.fab-menu.open{opacity:1;transform:translateY(0);pointer-events:auto;}
+.fab-item{display:flex;align-items:center;gap:10px;background:#fff;padding:10px 16px;border-radius:30px;box-shadow:0 8px 24px rgba(0,0,0,.15);font-size:13px;font-weight:600;}
+.fab-item i{width:18px;height:18px;}
+.fab-item.call i{color:var(--emergency);} .fab-item.line i{color:var(--line-green);}
+.fab-item.msg i{color:#0084FF;} .fab-item.tiktok i{color:#111827;}
+.fab-item.sos{background:var(--emergency);color:#fff;}
+.fab-item.sos i{color:#fff;}
+.fab-main{width:60px;height:60px;border-radius:50%;background:var(--primary);color:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 10px 26px rgba(13,94,166,.4);transition:.25s;}
+.fab-main.open{transform:rotate(135deg);}
+.fab-main i{width:26px;height:26px;}
+
+.mobile-bar{display:none;}
+
+@media(max-width:1024px){
+  .grid-3{grid-template-columns:repeat(2,1fr);}
+  .footer-grid{grid-template-columns:1fr 1fr;}
+  .viewer-stage{height:400px;}
+  .equipment-panel{width:300px;}
+}
+@media(max-width:720px){
+  .nav-links,.nav-cta{display:none;}
+  .burger{display:block;}
+  .page-hero h1{font-size:29px;}
+  .section{padding:64px 0;}
+  .section-title{font-size:26px;}
+  .footer-grid,.mode-panel.active{grid-template-columns:1fr;}
+  .fab-wrap{right:16px;bottom:82px;}
+  .viewer-topbar{flex-direction:column;align-items:flex-start;gap:12px;}
+  .viewer-stage{height:360px;}
+  .equipment-panel{width:100%;}
+  .timeline{grid-template-columns:1fr;gap:36px;}
+  .timeline::before{display:none;}
+  .mobile-bar{display:flex;position:fixed;bottom:0;left:0;right:0;z-index:800;background:#fff;border-top:1px solid #EEF1F4;padding:10px 14px;gap:10px;box-shadow:0 -6px 20px rgba(0,0,0,.06);}
+  .mobile-bar .btn{flex:1;justify-content:center;padding:14px 10px;font-size:14px;}
+  body{padding-bottom:70px;}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container nav">
+    <a class="logo" href="../../index.html"><i data-lucide="activity"></i>MedMove</a>
+    <nav class="nav-links">
+      <a href="../../index.html">หน้าแรก</a>
+      <a href="../../index.html#about">เกี่ยวกับเรา</a>
+      <a href="../../index.html#services">บริการ</a>
+      <a href="../../index.html#equipment">อุปกรณ์</a>
+      <a href="../../index.html#news">ข่าวสาร</a>
+      <a href="../../index.html#contact">ติดต่อเรา</a>
+    </nav>
+    <div class="nav-cta">
+      <a class="btn btn-outline" href="tel:1669"><i data-lucide="phone" style="width:16px;height:16px"></i>โทรทันที</a>
+      <a class="btn btn-line" href="https://line.me" target="_blank" rel="noopener"><i data-lucide="message-circle" style="width:16px;height:16px"></i>LINE</a>
+    </div>
+    <button class="burger"><i data-lucide="menu"></i></button>
+  </div>
+</header>
+
+<!-- PAGE HERO -->
+<section class="page-hero">
+  <div class="container fade-up">
+    <div class="breadcrumb">
+      <a href="../../index.html">หน้าแรก</a><i data-lucide="chevron-right"></i>
+      <a href="../../index.html#services">บริการ</a><i data-lucide="chevron-right"></i>
+      <span>ICU Ambulance</span>
+    </div>
+    <h1>รถพยาบาล <span>ICU Ambulance</span><br>มาตรฐานห้อง ICU โรงพยาบาล</h1>
+    <p>สำรวจภายในรถพยาบาล ICU แบบอินเทอร์แอคทีฟ คลิกที่อุปกรณ์เพื่อดูรายละเอียดแบบใกล้ชิด พร้อมทีมพยาบาลวิชาชีพดูแลตลอดการเดินทาง</p>
+    <div class="hero-cta">
+      <a class="btn btn-emergency" href="tel:1669"><i data-lucide="phone-call"></i>โทรทันที</a>
+      <a class="btn btn-line" href="https://line.me" target="_blank" rel="noopener"><i data-lucide="message-circle"></i>เพิ่มเพื่อน LINE</a>
+    </div>
+  </div>
+</section>
+
+<!-- CAMERA FOCUS EXPERIENCE -->
+<section class="section" id="viewer">
+  <div class="container">
+    <div class="section-tag">ICU Interactive Experience</div>
+    <div class="section-title">สำรวจภายในรถ ICU Ambulance</div>
+    <div class="section-subtitle">คลิกที่จุดอุปกรณ์ในภาพ กล้องจะหมุนและซูมเข้าไปโฟกัสอุปกรณ์นั้นพร้อมรายละเอียดแบบเต็ม</div>
+
+    <div class="viewer-wrap fade-up">
+      <div class="viewer-topbar">
+        <div>
+          <div class="scene-label">ICU ON WHEELS</div>
+          <div class="scene-title" id="viewerTitle">มุมมองปกติ — คลิกจุดสีขาวเพื่อดูอุปกรณ์</div>
+        </div>
+        <button class="viewer-reset" id="viewerReset"><i data-lucide="rotate-ccw"></i>ย้อนกลับ</button>
+      </div>
+      <div class="viewer-stage">
+        <div class="icu-scene-lg" id="icuScene">
+          <div class="icu-doors-lg"></div>
+          <button class="hotspot-lg p-vent" data-eq="ventilator"><i data-lucide="wind"></i><span class="hs-label">Ventilator</span></button>
+          <button class="hotspot-lg p-monitor" data-eq="monitor"><i data-lucide="activity"></i><span class="hs-label">Cardiac Monitor</span></button>
+          <button class="hotspot-lg p-defib" data-eq="defib"><i data-lucide="zap"></i><span class="hs-label">Defibrillator</span></button>
+          <button class="hotspot-lg p-syringe" data-eq="syringe"><i data-lucide="syringe"></i><span class="hs-label">Syringe Pump</span></button>
+          <button class="hotspot-lg p-oxygen" data-eq="oxygen"><i data-lucide="wind"></i><span class="hs-label">Oxygen System</span></button>
+          <div class="icu-bed-lg"></div>
+        </div>
+        <div class="viewer-overlay" id="viewerOverlay"></div>
+        <div class="equipment-panel" id="equipmentPanel">
+          <div class="ep-icon"><i data-lucide="wind" id="epIcon"></i></div>
+          <h3 id="epTitle">Ventilator</h3>
+          <div class="ep-standard" id="epStandard">Hospital Standard</div>
+          <p class="ep-desc" id="epDesc">เครื่องช่วยหายใจมาตรฐานโรงพยาบาล ควบคุมออกซิเจนและอัตราการหายใจอย่างแม่นยำ</p>
+          <ul class="ep-list" id="epList"></ul>
+          <div class="ep-actions">
+            <a class="btn btn-primary" href="../../index.html#equipment">ดูรายละเอียดเพิ่มเติม <i data-lucide="arrow-right" style="width:14px;height:14px"></i></a>
+            <button class="btn btn-outline" id="epBack"><i data-lucide="rotate-ccw" style="width:14px;height:14px"></i>ย้อนกลับ</button>
+          </div>
+        </div>
+      </div>
+      <div class="viewer-note">* ภาพประกอบสำหรับ mockup — เวอร์ชันจริงจะถ่ายทำภายในรถและอุปกรณ์จริงของ MedMove</div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICE MODE COMPARISON -->
+<section class="section" style="background:var(--neutral);">
+  <div class="container">
+    <div class="section-tag">เปรียบเทียบระดับการดูแล</div>
+    <div class="section-title">Basic vs Advanced vs ICU</div>
+    <div class="section-subtitle">บริการ ICU Ambulance คือระดับสูงสุดของ MedMove สำหรับผู้ป่วยวิกฤต</div>
+
+    <div class="fade-up">
+      <div class="mode-tabs">
+        <button class="mode-tab" data-mode="basic">Basic</button>
+        <button class="mode-tab" data-mode="advanced">Advanced</button>
+        <button class="mode-tab active" data-mode="icu">ICU</button>
+      </div>
+      <div class="mode-panel" id="mode-basic">
+        <div class="desc"><h3>Basic</h3><p>เหมาะสำหรับผู้ป่วยที่เคลื่อนไหวลำบาก ไม่มีภาวะวิกฤต</p>
+          <ul class="mode-list"><li><i data-lucide="check"></i>รถเข็นวีลแชร์</li><li><i data-lucide="check"></i>ถังออกซิเจนพกพา</li></ul>
+        </div>
+        <div class="mode-visual"><i data-lucide="wheelchair"></i></div>
+      </div>
+      <div class="mode-panel" id="mode-advanced">
+        <div class="desc"><h3>Advanced</h3><p>สำหรับผู้ป่วยที่ต้องเฝ้าระวังอาการระหว่างเดินทาง</p>
+          <ul class="mode-list"><li><i data-lucide="check"></i>Cardiac Monitor</li><li><i data-lucide="check"></i>Infusion Pump</li></ul>
+        </div>
+        <div class="mode-visual"><i data-lucide="activity"></i></div>
+      </div>
+      <div class="mode-panel active" id="mode-icu">
+        <div class="desc"><h3>ICU</h3><p>ระดับสูงสุดสำหรับผู้ป่วยวิกฤต เทียบเท่าห้อง ICU โรงพยาบาล</p>
+          <ul class="mode-list">
+            <li><i data-lucide="check"></i>Ventilator</li>
+            <li><i data-lucide="check"></i>Defibrillator</li>
+            <li><i data-lucide="check"></i>Syringe Pump</li>
+            <li><i data-lucide="check"></i>Critical Care Team</li>
+          </ul>
+        </div>
+        <div class="mode-visual"><i data-lucide="wind"></i></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="section">
+  <div class="container">
+    <div class="section-tag center">เส้นทางการดูแล</div>
+    <div class="section-title center">ดูแลผู้ป่วยตลอดเส้นทาง</div>
+    <div class="section-subtitle center">ตั้งแต่รับตัวที่บ้านจนถึงเตียงแพทย์ในโรงพยาบาล</div>
+    <div class="timeline">
+      <div class="tl-step fade-up"><div class="tl-icon"><i data-lucide="home"></i></div><h4>บ้าน</h4><p>ทีมงานถึงจุดรับตัวผู้ป่วยพร้อมอุปกรณ์ครบครัน</p></div>
+      <div class="tl-step fade-up"><div class="tl-icon"><i data-lucide="ambulance"></i></div><h4>รถพยาบาล ICU</h4><p>ดูแลสัญญาณชีพต่อเนื่องด้วยทีม Critical Care ตลอดการเดินทาง</p></div>
+      <div class="tl-step fade-up"><div class="tl-icon"><i data-lucide="building-2"></i></div><h4>โรงพยาบาล</h4><p>ส่งต่อผู้ป่วยถึงเตียงแพทย์อย่างปลอดภัยและไร้รอยต่อ</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="section cta-band">
+  <div class="container fade-up">
+    <h2>พร้อมดูแลคนที่คุณรัก ทุกวินาที ทุกเส้นทาง</h2>
+    <p>ทีมพยาบาลวิชาชีพและอุปกรณ์ ICU ครบครัน พร้อมออกเดินทางได้ทันที</p>
+    <div class="hero-cta">
+      <a class="btn btn-white" href="tel:1669"><i data-lucide="phone-call"></i>โทรทันที</a>
+      <a class="btn btn-line" href="https://line.me" target="_blank" rel="noopener"><i data-lucide="message-circle"></i>เพิ่มเพื่อน LINE</a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="logo" style="color:#fff;"><i data-lucide="activity"></i>MedMove</div>
+        <p style="color:rgba(255,255,255,.6);font-size:14px;margin-top:14px;max-width:280px;">Premium Medical Transport — ICU On Wheels ดูแลผู้ป่วยวิกฤตด้วยมาตรฐานโรงพยาบาล</p>
+      </div>
+      <div><h5>บริการ</h5><ul><li>ICU Ambulance</li><li>Critical Care Transfer</li><li>Long Distance</li><li>Event Standby</li></ul></div>
+      <div><h5>บริษัท</h5><ul><li>เกี่ยวกับเรา</li><li>ข่าวสาร</li><li>Media Center</li><li>ร่วมงานกับเรา</li></ul></div>
+      <div><h5>ติดต่อ</h5><ul><li>1669</li><li>contact@medmove.co.th</li><li>LINE: @medmove</li></ul></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2569 MedMove. สงวนลิขสิทธิ์ทุกประการ</span>
+      <span>Premium Ambulance Platform — Mockup v1.0</span>
+    </div>
+  </div>
+</footer>
+
+<div class="fab-wrap">
+  <div class="fab-menu" id="fabMenu">
+    <a class="fab-item sos" href="tel:1669"><i data-lucide="siren"></i>ฉุกเฉิน SOS</a>
+    <a class="fab-item call" href="tel:1669"><i data-lucide="phone"></i>โทรทันที</a>
+    <a class="fab-item line" href="https://line.me" target="_blank" rel="noopener"><i data-lucide="message-circle"></i>LINE</a>
+    <a class="fab-item msg" href="#"><i data-lucide="send"></i>Messenger</a>
+    <a class="fab-item tiktok" href="#"><i data-lucide="music-2"></i>TikTok</a>
+  </div>
+  <button class="fab-main" id="fabMain"><i data-lucide="plus"></i></button>
+</div>
+
+<div class="mobile-bar">
+  <a class="btn btn-emergency" href="tel:1669"><i data-lucide="phone-call" style="width:16px;height:16px"></i>โทรทันที</a>
+  <a class="btn btn-line" href="https://line.me" target="_blank" rel="noopener"><i data-lucide="message-circle" style="width:16px;height:16px"></i>LINE</a>
+</div>
+
+<script>
+lucide.createIcons();
+
+const io = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+},{threshold:.15});
+document.querySelectorAll('.fade-up').forEach(el=>io.observe(el));
+
+/* ===== Camera Focus Experience (GSAP) ===== */
+const cameraStates = {
+  normal:      { scale:1,   x:0,    y:0 },
+  ventilator:  { scale:2.0, x:-180, y:-60 },
+  monitor:     { scale:2.2, x:100,  y:-120 },
+  defib:       { scale:2.1, x:180,  y:40 },
+  syringe:     { scale:2.0, x:-120, y:100 },
+  oxygen:      { scale:2.0, x:120,  y:120 }
+};
+const equipmentData = {
+  ventilator:{icon:'wind',title:'Ventilator',standard:'Hospital Standard',desc:'เครื่องช่วยหายใจมาตรฐานโรงพยาบาล ควบคุมออกซิเจนและอัตราการหายใจอย่างแม่นยำสำหรับผู้ป่วยวิกฤต',features:['Adult Mode','Pediatric Mode','Battery Backup','Oxygen Integration']},
+  monitor:{icon:'activity',title:'Cardiac Monitor',standard:'ICU Grade Monitoring',desc:'ติดตามสัญญาณชีพ คลื่นหัวใจ ความดัน และออกซิเจนในเลือดตลอดการเดินทาง',features:['ECG 12-Lead','SpO2 & NIBP','Battery Backup 4 ชม.','Wireless Data Sync']},
+  defib:{icon:'zap',title:'Defibrillator',standard:'AHA / ERC Standard',desc:'เครื่องกระตุกหัวใจไฟฟ้าพร้อมใช้งานทันทีในกรณีหัวใจหยุดเต้นเฉียบพลัน',features:['Manual + AED Mode','Biphasic Waveform','Pediatric Pads','Real-time ECG Display']},
+  syringe:{icon:'syringe',title:'Syringe Pump',standard:'Precision Infusion',desc:'ควบคุมการให้ยาต่อเนื่องอย่างแม่นยำในระดับไมโครลิตรสำหรับผู้ป่วยวิกฤต',features:['Dual Channel','Dose Error Reduction','Battery Backup 6 ชม.','Micro-infusion Accuracy']},
+  oxygen:{icon:'wind',title:'Oxygen System',standard:'High-Pressure Reserve',desc:'ระบบออกซิเจนแรงดันสูงสำรองเพียงพอตลอดการเดินทางไกล',features:['ถังสำรอง 2 ถัง','Flow Meter ปรับได้','ระบบ Alarm แรงดันต่ำ','พอสำหรับเดินทางไกล']}
+};
+
+const scene=document.getElementById('icuScene');
+const overlay=document.getElementById('viewerOverlay');
+const panel=document.getElementById('equipmentPanel');
+const resetBtn=document.getElementById('viewerReset');
+const viewerTitle=document.getElementById('viewerTitle');
+let currentEq=null;
+
+function focusEquipment(key){
+  currentEq=key;
+  const s=cameraStates[key];
+  gsap.to(scene,{scale:s.scale,x:s.x,y:s.y,duration:1.2,ease:'power3.inOut'});
+  overlay.classList.add('show');
+  const d=equipmentData[key];
+  document.getElementById('epIcon').setAttribute('data-lucide',d.icon);
+  document.getElementById('epTitle').textContent=d.title;
+  document.getElementById('epStandard').textContent=d.standard;
+  document.getElementById('epDesc').textContent=d.desc;
+  document.getElementById('epList').innerHTML=d.features.map(f=>'<li><i data-lucide="check"></i>'+f+'</li>').join('');
+  lucide.createIcons();
+  setTimeout(()=>panel.classList.add('open'),250);
+  resetBtn.classList.add('show');
+  viewerTitle.textContent='กำลังโฟกัส: '+d.title;
+}
+function resetCamera(){
+  currentEq=null;
+  gsap.to(scene,{scale:1,x:0,y:0,duration:1,ease:'power3.inOut'});
+  panel.classList.remove('open');
+  overlay.classList.remove('show');
+  resetBtn.classList.remove('show');
+  viewerTitle.textContent='มุมมองปกติ — คลิกจุดสีขาวเพื่อดูอุปกรณ์';
+}
+document.querySelectorAll('[data-eq]').forEach(btn=>{
+  btn.addEventListener('click',()=>focusEquipment(btn.dataset.eq));
+});
+resetBtn.addEventListener('click',resetCamera);
+document.getElementById('epBack').addEventListener('click',resetCamera);
+overlay.addEventListener('click',resetCamera);
+
+/* Service mode tabs */
+document.querySelectorAll('.mode-tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    document.querySelectorAll('.mode-tab').forEach(t=>t.classList.remove('active'));
+    document.querySelectorAll('.mode-panel').forEach(p=>p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('mode-'+tab.dataset.mode).classList.add('active');
+  });
+});
+
+/* FAB */
+const fabMain=document.getElementById('fabMain'), fabMenu=document.getElementById('fabMenu');
+fabMain.addEventListener('click',()=>{
+  fabMain.classList.toggle('open');
+  fabMenu.classList.toggle('open');
+});
+</script>
+</body>
+</html>
